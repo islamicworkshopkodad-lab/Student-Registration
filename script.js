@@ -1,11 +1,21 @@
 const form = document.getElementById("registrationForm");
 const submitBtn = document.getElementById("submitBtn");
 
-const studentNameInput = document.getElementById("studentName");
-const studentMobileInput = document.getElementById("studentMobile");
-const motherNameInput = document.getElementById("motherName");
-const fatherNameInput = document.getElementById("fatherName");
-const parentMobileInput = document.getElementById("parentMobile");
+const studentNameInput =
+    document.getElementById("studentName");
+
+const studentMobileInput =
+    document.getElementById("studentMobile");
+
+const motherNameInput =
+    document.getElementById("motherName");
+
+const fatherNameInput =
+    document.getElementById("fatherName");
+
+const parentMobileInput =
+    document.getElementById("parentMobile");
+
 const qualificationInput =
     document.getElementById("qualification");
 
@@ -14,52 +24,86 @@ const collegeSection =
 
 const collegeInput =
     document.getElementById("college");
-    qualificationInput.addEventListener("change", function () {
 
-    if (this.value === "College") {
 
-        collegeSection.style.display = "block";
-        collegeInput.required = true;
+// ==========================================
+// GOOGLE APPS SCRIPT URL
+// ==========================================
 
-    } else {
+const scriptURL =
+    "https://script.google.com/macros/s/AKfycbw-KIBxK0FXT5Qk_awDXQaKMHdKKuRd62TiYJVmjxAeGWeiVSCfRHjNofT8lfAlJMgK/exec";
 
-        collegeSection.style.display = "none";
-        collegeInput.required = false;
-        collegeInput.value = "";
+
+// ==========================================
+// COLLEGE SECTION
+// ==========================================
+
+qualificationInput.addEventListener(
+    "change",
+    function () {
+
+        if (this.value === "College") {
+
+            collegeSection.style.display = "block";
+
+            collegeInput.required = true;
+
+        } else {
+
+            collegeSection.style.display = "none";
+
+            collegeInput.required = false;
+
+            collegeInput.value = "";
+
+        }
 
     }
+);
 
-});
 
-
-// ===============================
+// ==========================================
 // CONVERT NAMES TO CAPITAL LETTERS
-// ===============================
+// ==========================================
 
-studentNameInput.addEventListener("input", function () {
-    this.value = this.value.toUpperCase();
-});
-motherNameInput.addEventListener("input", function () {
-    this.value = this.value.toUpperCase();
-});
-fatherNameInput.addEventListener("input", function () {
-    this.value = this.value.toUpperCase();
-});
+studentNameInput.addEventListener(
+    "input",
+    function () {
+        this.value = this.value.toUpperCase();
+    }
+);
+
+motherNameInput.addEventListener(
+    "input",
+    function () {
+        this.value = this.value.toUpperCase();
+    }
+);
+
+fatherNameInput.addEventListener(
+    "input",
+    function () {
+        this.value = this.value.toUpperCase();
+    }
+);
 
 
-// ===============================
-// ALLOW ONLY NUMBERS IN MOBILE
-// ===============================
+// ==========================================
+// ALLOW ONLY NUMBERS
+// ==========================================
 
 function allowOnlyNumbers(input) {
 
-    input.addEventListener("input", function () {
+    input.addEventListener(
+        "input",
+        function () {
 
-        this.value = this.value
-            .replace(/\D/g, "")
-            .slice(0, 10);
+            this.value = this.value
+                .replace(/\D/g, "")
+                .slice(0, 10);
 
-    });
+        }
+    );
 
 }
 
@@ -67,217 +111,657 @@ allowOnlyNumbers(studentMobileInput);
 allowOnlyNumbers(parentMobileInput);
 
 
-// ===============================
-// FORM SUBMISSION
-// ===============================
+// ==========================================
+// STUDENT MOBILE NUMBER CHECK
+// ==========================================
 
-form.addEventListener("submit", function (event) {
+let mobileCheckInProgress = false;
+let mobileAlreadyRegistered = false;
 
+
+// ==========================================
+// CHECK MOBILE WHEN PRESSING TAB
+// ==========================================
+
+studentMobileInput.addEventListener("keydown", function (event) {
+
+    if (event.key !== "Tab") {
+        return;
+    }
+
+    const mobile = studentMobileInput.value.trim();
+
+    // Only check a complete valid mobile number
+    if (!/^[6-9][0-9]{9}$/.test(mobile)) {
+        return;
+    }
+
+    // Stop Tab from moving to the next field
     event.preventDefault();
 
+    // If already checking, stay here
+    if (mobileCheckInProgress) {
+        return;
+    }
 
-    // Get values
+    // If already registered, stay here
+    if (mobileAlreadyRegistered) {
+        return;
+    }
 
-    const studentName =
-        studentNameInput.value.trim();
+    const message =
+        document.getElementById("studentMobileMessage");
 
-    const studentMobile =
-        studentMobileInput.value.trim();
+    message.textContent = "";
 
-    const qualification =
-        document.getElementById("qualification")
-        .value.trim();
+    mobileCheckInProgress = true;
+
+    const callbackName =
+        "mobileCheckCallback_" + Date.now();
+
+    let completed = false;
+
+    window[callbackName] = function (response) {
+
+        completed = true;
+
+        mobileCheckInProgress = false;
+
+        delete window[callbackName];
+
+        if (response && response.success) {
+
+            // Already registered
+            mobileAlreadyRegistered = true;
+
+            message.textContent =
+                "You are already registered with this mobile number. " +
+                "For details, go to Already Registered menu.";
+
+            studentMobileInput.focus();
+
+            return;
+        }
+
+        // Not registered
+        mobileAlreadyRegistered = false;
+
+        message.textContent = "";
+
+        // Find the next form field
+        const fields = Array.from(
+            form.querySelectorAll(
+                "input:not([type='hidden']), select, textarea"
+            )
+        );
+
+        const currentIndex =
+            fields.indexOf(studentMobileInput);
+
+        if (
+            currentIndex !== -1 &&
+            fields[currentIndex + 1]
+        ) {
+            fields[currentIndex + 1].focus();
+        }
+    };
+
+    const url =
+        scriptURL +
+        "?action=getDetails" +
+        "&studentMobile=" +
+        encodeURIComponent(mobile) +
+        "&callback=" +
+        encodeURIComponent(callbackName);
+
+    const script =
+        document.createElement("script");
+
+    script.src = url;
+    script.async = true;
+
+    script.onerror = function () {
+
+        if (completed) {
+            return;
+        }
+
+        mobileCheckInProgress = false;
+
+        delete window[callbackName];
+
+        script.remove();
+
+        message.textContent =
+            "Unable to check this mobile number. Please try again.";
+
+        studentMobileInput.focus();
+    };
+
+    document.body.appendChild(script);
+});
+
+
+// ==========================================
+// REGISTRATION FORM
+// ==========================================
+
+form.addEventListener(
+    "submit",
+    function (event) {
+
+        event.preventDefault();
+
+
+        const studentName =
+            studentNameInput.value.trim();
+
+        const studentMobile =
+            studentMobileInput.value.trim();
+
+        const qualification =
+            qualificationInput.value.trim();
+
         let college = "-";
 
-if (qualification === "College") {
-    college = collegeInput.value;
-}
-    
-    const motherName =
-        motherNameInput.value.trim();
+        if (qualification === "College") {
+            college = collegeInput.value;
+        }
 
-    const fatherName =
-        fatherNameInput.value.trim();
+        const motherName =
+            motherNameInput.value.trim();
 
-    const parentMobile =
-        parentMobileInput.value.trim();
+        const fatherName =
+            fatherNameInput.value.trim();
 
-    const village =
-        document.getElementById("village")
-        .value.trim();
+        const parentMobile =
+            parentMobileInput.value.trim();
 
-    const constituency =
-        document.getElementById("constituency").value;
+        const village =
+            document
+                .getElementById("village")
+                .value.trim();
+
+        const constituency =
+            document
+                .getElementById("constituency")
+                .value;
 
         const quranArabic =
-    document.querySelector('input[name="quranArabic"]:checked').value;
+            document.querySelector(
+                'input[name="quranArabic"]:checked'
+            ).value;
 
-         const masjidName=
-    document.getElementById("masjidName").value;
-    // ===============================
-    // MOBILE NUMBER VALIDATION
-    // ===============================
+        const masjidName =
+            document
+                .getElementById("masjidName")
+                .value;
+
+
+        // ==========================================
+        // MOBILE VALIDATION
+        // ==========================================
+
+        const mobilePattern =
+            /^[6-9][0-9]{9}$/;
+
+
+        if (!mobilePattern.test(studentMobile)) {
+
+            alert(
+                "Please enter a valid 10-digit Student Mobile Number starting with 6, 7, 8 or 9."
+            );
+
+            studentMobileInput.focus();
+
+            return;
+        }
+
+
+        if (!mobilePattern.test(parentMobile)) {
+
+            alert(
+                "Please enter a valid 10-digit Parent Mobile Number starting with 6, 7, 8 or 9."
+            );
+
+            parentMobileInput.focus();
+
+            return;
+        }
+
+
+        // ==========================================
+        // DISABLE BUTTON
+        // ==========================================
+
+        submitBtn.disabled = true;
+
+        submitBtn.textContent = "Submitting...";
+
+
+        // ==========================================
+        // UNIQUE CALLBACK
+        // ==========================================
+
+        const callbackName =
+            "googleSheetCallback_" +
+            Date.now();
+
+        let completed = false;
+
+
+        // ==========================================
+        // CALLBACK
+        // ==========================================
+
+        window[callbackName] =
+            function (response) {
+
+                completed = true;
+
+
+                if (
+                    response &&
+                    response.success
+                ) {
+
+                    // Fill popup details
+
+                    document
+                        .getElementById("popupParticipant")
+                        .textContent =
+                        response.studentName ||
+                        studentName;
+
+
+                    document
+                        .getElementById("popupRegistrationId")
+                        .textContent =
+                        response.registrationId;
+
+
+                    // This is the NEW registration popup
+
+                    document
+                        .getElementById("popupHeading")
+                        .textContent =
+                        "Registration Successful";
+
+
+                    document
+                        .getElementById("successPopup")
+                        .style.display =
+                        "flex";
+
+
+                    form.reset();
+
+                }
+
+
+                else if (
+                    response &&
+                    response.alreadyRegistered
+                ) {
+
+                    alert(
+                        "You are already registered.\n\n" +
+                        "Your Registration ID: " +
+                        response.registrationId
+                    );
+
+                }
+
+
+                else {
+
+                    alert(
+                        response &&
+                        response.message
+                            ? response.message
+                            : "Registration failed. Please try again."
+                    );
+
+                }
+
+
+                submitBtn.disabled = false;
+
+                submitBtn.textContent = "Submit";
+
+                delete window[callbackName];
+
+            };
+
+
+        // ==========================================
+        // CREATE REQUEST URL
+        // ==========================================
+
+        const url =
+            scriptURL +
+
+            "?studentName=" +
+            encodeURIComponent(studentName) +
+
+            "&studentMobile=" +
+            encodeURIComponent(studentMobile) +
+
+            "&qualification=" +
+            encodeURIComponent(qualification) +
+
+            "&college=" +
+            encodeURIComponent(college) +
+
+            "&motherName=" +
+            encodeURIComponent(motherName) +
+
+            "&fatherName=" +
+            encodeURIComponent(fatherName) +
+
+            "&parentMobile=" +
+            encodeURIComponent(parentMobile) +
+
+            "&village=" +
+            encodeURIComponent(village) +
+
+            "&constituency=" +
+            encodeURIComponent(constituency) +
+
+            "&quranArabic=" +
+            encodeURIComponent(quranArabic) +
+
+            "&masjidName=" +
+            encodeURIComponent(masjidName) +
+
+            "&callback=" +
+            encodeURIComponent(callbackName);
+
+
+        // ==========================================
+        // SEND JSONP REQUEST
+        // ==========================================
+
+        const script =
+            document.createElement("script");
+
+        script.src = url;
+
+        script.async = true;
+
+
+        // ==========================================
+        // ERROR
+        // ==========================================
+
+        script.onerror = function () {
+
+            if (completed) {
+                return;
+            }
+
+            alert(
+                "Unable to connect to the registration server. Please check your internet connection and try again."
+            );
+
+            submitBtn.disabled = false;
+
+            submitBtn.textContent = "Submit";
+
+            delete window[callbackName];
+
+            script.remove();
+
+        };
+
+
+        // ==========================================
+        // TIMEOUT
+        // ==========================================
+
+        const timeout =
+            setTimeout(
+                function () {
+
+                    if (!completed) {
+
+                        alert(
+                            "The server is taking too long to respond. Please try again."
+                        );
+
+                        submitBtn.disabled = false;
+
+                        submitBtn.textContent =
+                            "Submit";
+
+                        delete window[callbackName];
+
+                        script.remove();
+
+                    }
+
+                },
+                20000
+            );
+
+
+        script.onload = function () {
+
+            clearTimeout(timeout);
+
+            setTimeout(
+                function () {
+                    script.remove();
+                },
+                100
+            );
+
+        };
+
+
+        document.body.appendChild(script);
+
+    }
+);
+
+
+// ==========================================
+// ALREADY REGISTERED POPUP
+// ==========================================
+
+function openAlreadyRegisteredPopup() {
+
+    document
+        .getElementById("alreadyRegisteredPopup")
+        .style.display = "flex";
+
+
+    document
+        .getElementById("registeredMobile")
+        .value = "";
+
+
+    setTimeout(
+        function () {
+
+            document
+                .getElementById("registeredMobile")
+                .focus();
+
+        },
+        100
+    );
+
+}
+
+
+// ==========================================
+// CLOSE ALREADY REGISTERED POPUP
+// ==========================================
+
+function closeAlreadyRegisteredPopup() {
+
+    document
+        .getElementById("alreadyRegisteredPopup")
+        .style.display = "none";
+
+}
+
+
+// ==========================================
+// ALLOW ONLY NUMBERS IN LOOKUP BOX
+// ==========================================
+
+document
+    .getElementById("registeredMobile")
+    .addEventListener(
+        "input",
+        function () {
+
+            this.value =
+                this.value
+                    .replace(/\D/g, "")
+                    .slice(0, 10);
+
+        }
+    );
+
+
+// ==========================================
+// GET REGISTERED DETAILS
+// ==========================================
+
+function getRegisteredDetails() {
+
+    const mobile =
+        document
+            .getElementById("registeredMobile")
+            .value
+            .trim();
+
 
     const mobilePattern =
         /^[6-9][0-9]{9}$/;
 
 
-    if (!mobilePattern.test(studentMobile)) {
+    if (!mobilePattern.test(mobile)) {
 
         alert(
-            "Please enter a valid 10-digit Student Mobile Number starting with 6, 7, 8 or 9."
+            "Please enter a valid 10-digit mobile number starting with 6, 7, 8 or 9."
         );
-
-        studentMobileInput.focus();
 
         return;
     }
 
 
-    if (!mobilePattern.test(parentMobile)) {
-
-        alert(
-            "Please enter a valid 10-digit Parent Mobile Number starting with 6, 7, 8 or 9."
+    const getDetailsBtn =
+        document.getElementById(
+            "getDetailsBtn"
         );
 
-        parentMobileInput.focus();
 
-        return;
-    }
+    getDetailsBtn.disabled = true;
 
+    getDetailsBtn.textContent =
+        "Getting Details...";
 
-    // ===============================
-    // DISABLE BUTTON
-    // ===============================
-
-    submitBtn.disabled = true;
-
-    submitBtn.textContent = "Submitting...";
-
-
-    // ===============================
-    // GOOGLE APPS SCRIPT URL
-    // ===============================
-
-    const scriptURL =
-        "https://script.google.com/macros/s/AKfycbzCpeQJG2OvhLiy2ZVxAZkN9SimPcs6yv6PuhDajzTKdUjhVEWc27o7mLFeDv0RaYSA/exec";
-
-
-    // ===============================
-    // UNIQUE CALLBACK
-    // ===============================
 
     const callbackName =
-        "googleSheetCallback_" +
+        "registeredDetailsCallback_" +
         Date.now();
 
 
     let completed = false;
 
 
-    // ===============================
-    // CALLBACK FUNCTION
-    // ===============================
+    window[callbackName] =
+        function (response) {
 
-    window[callbackName] = function (response) {
-
-        completed = true;
+            completed = true;
 
 
-        if (response && response.success) {
+            getDetailsBtn.disabled = false;
 
-            document.getElementById("successMessage").textContent =
-                "Registration ID: " +
-                response.registrationId;
-
-            document.getElementById("successPopup").style.display =
-                "flex";
-
-            form.reset();
-
-        }
-
-        else if (
-            response &&
-            response.alreadyRegistered
-        ) {
-
-            alert(
-                "You are already registered.\n\n" +
-                "Your Registration ID: " +
-                response.registrationId
-            );
-
-        }
-
-        else {
-
-            alert(
-                response && response.message
-                    ? response.message
-                    : "Registration failed. Please try again."
-            );
-
-        }
+            getDetailsBtn.textContent =
+                "Get Details";
 
 
-        submitBtn.disabled = false;
-
-        submitBtn.textContent = "Submit";
+            delete window[callbackName];
 
 
-        delete window[callbackName];
+            if (
+                response &&
+                response.success
+            ) {
 
-    };
+                // Close mobile number popup
+
+                closeAlreadyRegisteredPopup();
 
 
-    // ===============================
-    // CREATE REQUEST URL
-    // ===============================
+                // Fill details popup
+
+                document
+                    .getElementById(
+                        "popupParticipant"
+                    )
+                    .textContent =
+                    response.studentName;
+
+
+                document
+                    .getElementById(
+                        "popupRegistrationId"
+                    )
+                    .textContent =
+                    response.registrationId;
+
+
+                // IMPORTANT:
+                // Do NOT show "Registration Successful"
+
+                document
+                    .getElementById(
+                        "popupHeading"
+                    )
+                    .textContent =
+                    "Registration Details";
+
+
+                document
+                    .getElementById(
+                        "successPopup"
+                    )
+                    .style.display =
+                    "flex";
+
+            }
+
+            else {
+
+                alert(
+                    response &&
+                    response.message
+                        ? response.message
+                        : "Registration details not found."
+                );
+
+            }
+
+        };
+
 
     const url =
         scriptURL +
 
-        "?studentName=" +
-        encodeURIComponent(studentName) +
+        "?action=getDetails" +
 
         "&studentMobile=" +
-        encodeURIComponent(studentMobile) +
-
-        "&qualification=" +
-        encodeURIComponent(qualification) +
-
-        "&college=" +
-        encodeURIComponent(college) +
-
-           "&motherName=" +
-        encodeURIComponent(motherName) +
-
-        "&fatherName=" +
-        encodeURIComponent(fatherName) +
-
-        "&parentMobile=" +
-        encodeURIComponent(parentMobile) +
-
-        "&village=" +
-        encodeURIComponent(village) +
-
-        "&constituency=" +
-        encodeURIComponent(constituency) +
-
-        "&quranArabic=" +
-       encodeURIComponent(quranArabic) +
-
-       "&masjidName=" +
-       encodeURIComponent(masjidName) +
+        encodeURIComponent(mobile) +
 
         "&callback=" +
         encodeURIComponent(callbackName);
 
-
-    // ===============================
-    // CREATE JSONP SCRIPT
-    // ===============================
 
     const script =
         document.createElement("script");
@@ -288,10 +772,6 @@ if (qualification === "College") {
     script.async = true;
 
 
-    // ===============================
-    // ERROR HANDLING
-    // ===============================
-
     script.onerror = function () {
 
         if (completed) {
@@ -299,81 +779,307 @@ if (qualification === "College") {
         }
 
 
-        alert(
-            "Unable to connect to the registration server. Please check your internet connection and try again."
-        );
+        getDetailsBtn.disabled = false;
 
-
-        submitBtn.disabled = false;
-
-        submitBtn.textContent = "Submit";
+        getDetailsBtn.textContent =
+            "Get Details";
 
 
         delete window[callbackName];
 
-
         script.remove();
+
+
+        alert(
+            "Unable to connect to the registration server. Please try again."
+        );
 
     };
 
 
-    // ===============================
-    // TIMEOUT
-    // ===============================
-
     const timeout =
-        setTimeout(function () {
+        setTimeout(
+            function () {
 
-            if (!completed) {
+                if (!completed) {
 
-                alert(
-                    "The server is taking too long to respond. Please try again."
-                );
+                    getDetailsBtn.disabled = false;
 
-                submitBtn.disabled = false;
+                    getDetailsBtn.textContent =
+                        "Get Details";
 
-                submitBtn.textContent = "Submit";
+                    delete window[callbackName];
 
-                delete window[callbackName];
+                    script.remove();
 
-                script.remove();
+                    alert(
+                        "The server is taking too long to respond. Please try again."
+                    );
 
-            }
+                }
 
-        }, 20000);
+            },
+            20000
+        );
 
-
-    // ===============================
-    // SUCCESSFUL LOAD
-    // ===============================
 
     script.onload = function () {
 
         clearTimeout(timeout);
 
-        setTimeout(function () {
-            script.remove();
-        }, 100);
+        setTimeout(
+            function () {
+                script.remove();
+            },
+            100
+        );
 
     };
 
 
-    // ===============================
-    // SEND REQUEST
-    // ===============================
-
     document.body.appendChild(script);
 
-});
+}
 
 
-// ===============================
-// CLOSE SUCCESS POPUP
-// ===============================
+// ==========================================
+// COPY REGISTRATION DETAILS
+// ==========================================
+
+function copyRegistrationDetails() {
+
+    const participant =
+        document
+            .getElementById(
+                "popupParticipant"
+            )
+            .textContent;
+
+
+    const registrationId =
+        document
+            .getElementById(
+                "popupRegistrationId"
+            )
+            .textContent;
+
+
+    const details =
+`ONE DAY ISLAMIC TRAINING WORKSHOP
+
+Participant: ${participant}
+Registration ID: ${registrationId}
+Date: 11 October 2026
+Venue: AR AR Function Hall, Kodad
+Reporting Time: 8:30 AM`;
+
+
+    navigator.clipboard
+        .writeText(details)
+        .then(
+            function () {
+
+                const copyBtn =
+                    document.getElementById(
+                        "copyBtn"
+                    );
+
+                copyBtn.textContent =
+                    "Copied!";
+
+
+                setTimeout(
+                    function () {
+
+                        copyBtn.textContent =
+                            "Copy";
+
+                    },
+                    2000
+                );
+
+            }
+        )
+        .catch(
+            function () {
+
+                alert(
+                    "Unable to copy the registration details."
+                );
+
+            }
+        );
+
+}
+
+
+// ==========================================
+// DOWNLOAD REGISTRATION DETAILS AS PDF
+// ==========================================
+
+function downloadRegistrationDetails() {
+
+    const participant =
+        document
+            .getElementById(
+                "popupParticipant"
+            )
+            .textContent;
+
+
+    const registrationId =
+        document
+            .getElementById(
+                "popupRegistrationId"
+            )
+            .textContent;
+
+
+    const {
+        jsPDF
+    } = window.jspdf;
+
+
+    const pdf =
+        new jsPDF();
+
+
+    // Title
+
+    pdf.setFontSize(18);
+
+    pdf.setFont(undefined, "bold");
+
+    pdf.text(
+        "ONE DAY ISLAMIC TRAINING WORKSHOP",
+        105,
+        25,
+        {
+            align: "center"
+        }
+    );
+
+
+    // Line
+
+    pdf.setLineWidth(0.5);
+
+    pdf.line(
+        20,
+        32,
+        190,
+        32
+    );
+
+
+    // Details
+
+    pdf.setFontSize(12);
+
+    pdf.setFont(undefined, "normal");
+
+
+    pdf.text(
+        "Participant:",
+        25,
+        50
+    );
+
+    pdf.text(
+        participant,
+        75,
+        50
+    );
+
+
+    pdf.text(
+        "Registration ID:",
+        25,
+        62
+    );
+
+    pdf.text(
+        registrationId,
+        75,
+        62
+    );
+
+
+    pdf.text(
+        "Date:",
+        25,
+        74
+    );
+
+    pdf.text(
+        "11 October 2026",
+        75,
+        74
+    );
+
+
+    pdf.text(
+        "Venue:",
+        25,
+        86
+    );
+
+    pdf.text(
+        "AR AR Function Hall, Kodad",
+        75,
+        86
+    );
+
+
+    pdf.text(
+        "Reporting Time:",
+        25,
+        98
+    );
+
+    pdf.text(
+        "8:30 AM",
+        75,
+        98
+    );
+
+
+    // Footer
+
+    pdf.setFontSize(10);
+
+    pdf.text(
+        "Please keep this registration details safely.",
+        105,
+        120,
+        {
+            align: "center"
+        }
+    );
+
+
+    // Download
+
+    pdf.save(
+        "Registration_" +
+        registrationId +
+        ".pdf"
+    );
+
+}
+
+
+// ==========================================
+// CLOSE SUCCESS / DETAILS POPUP
+// ==========================================
 
 function closePopup() {
 
-    document.getElementById("successPopup")
-        .style.display = "none";
+    document
+        .getElementById(
+            "successPopup"
+        )
+        .style.display =
+        "none";
 
 }
