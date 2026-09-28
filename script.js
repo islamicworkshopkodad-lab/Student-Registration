@@ -19,6 +19,8 @@ const parentMobileInput =
 const qualificationInput =
     document.getElementById("qualification");
 
+qualificationInput.disabled = true;
+
 const collegeSection =
     document.getElementById("collegeSection");
 
@@ -112,6 +114,170 @@ allowOnlyNumbers(parentMobileInput);
 
 
 // ==========================================
+// FIELD-BY-FIELD RESTRICTION
+// ==========================================
+
+const villageInput = document.getElementById("village");
+const constituencyInput = document.getElementById("constituency");
+const masjidNameInput = document.getElementById("masjidName");
+
+
+// Check whether a field has been properly filled
+function isFieldFilled(field) {
+
+    // Normal input / select
+    if (
+        field.tagName === "INPUT" ||
+        field.tagName === "SELECT" ||
+        field.tagName === "TEXTAREA"
+    ) {
+        return field.value.trim() !== "";
+    }
+
+    return true;
+}
+
+
+// Get all fields in the correct order
+function getFormFields() {
+
+    const fields = [
+        studentNameInput,
+        studentMobileInput,
+        qualificationInput
+    ];
+
+    // Add college qualification only when College is selected
+    if (qualificationInput.value === "College") {
+        fields.push(collegeInput);
+    }
+
+    fields.push(
+        motherNameInput,
+        fatherNameInput,
+        parentMobileInput,
+        villageInput,
+        constituencyInput
+    );
+
+    // Qur'an radio buttons
+    fields.push(
+        document.querySelector(
+            'input[name="quranArabic"]:checked'
+        )
+    );
+
+    fields.push(masjidNameInput);
+
+    return fields;
+}
+
+
+// Prevent jumping directly to later fields
+form.addEventListener("focusin", function (event) {
+
+    const target = event.target;
+
+    // Ignore the Submit button
+    if (target.id === "submitBtn") {
+        return;
+    }
+
+    const fields = getFormFields();
+
+    const targetIndex = fields.indexOf(target);
+
+    // If this isn't one of our controlled fields
+    if (targetIndex === -1) {
+        return;
+    }
+
+    // Check all fields before the current field
+    for (let i = 0; i < targetIndex; i++) {
+
+        const previousField = fields[i];
+
+        // Radio button group
+        if (
+            previousField &&
+            previousField.type === "radio"
+        ) {
+
+            const radioSelected =
+                document.querySelector(
+                    'input[name="quranArabic"]:checked'
+                );
+
+            if (!radioSelected) {
+
+                alert(
+                    "Please answer the previous question before continuing."
+                );
+
+                previousField.focus();
+
+                return;
+            }
+
+            continue;
+        }
+
+
+        // Normal field
+        if (
+    previousField &&
+    !isFieldFilled(previousField)
+) {
+
+    alert(
+        "Please complete the previous field before continuing."
+    );
+
+    previousField.focus();
+
+    return;
+}
+
+
+// ==========================================
+// SPECIAL CHECK FOR STUDENT MOBILE
+// ==========================================
+
+if (previousField === studentMobileInput) {
+
+    // Mobile is currently being checked
+    if (mobileCheckInProgress) {
+
+        studentMobileInput.focus();
+
+        return;
+    }
+
+
+    // Mobile is already registered
+    if (mobileAlreadyRegistered) {
+
+        studentMobileInput.focus();
+
+        return;
+    }
+
+
+    // Mobile has not been checked yet
+    if (!/^[6-9][0-9]{9}$/.test(
+        studentMobileInput.value.trim()
+    )) {
+
+        studentMobileInput.focus();
+
+        return;
+    }
+}
+    }
+
+});
+
+// ==========================================
 // STUDENT MOBILE NUMBER CHECK
 // ==========================================
 
@@ -120,46 +286,96 @@ let mobileAlreadyRegistered = false;
 
 
 // ==========================================
-// CHECK MOBILE WHEN PRESSING TAB
+// CLEAR MOBILE CHECK WHEN NUMBER CHANGES
 // ==========================================
 
-studentMobileInput.addEventListener("keydown", function (event) {
+studentMobileInput.addEventListener("input", function () {
 
-    if (event.key !== "Tab") {
-        return;
-    }
-
-    const mobile = studentMobileInput.value.trim();
-
-    // Only check a complete valid mobile number
-    if (!/^[6-9][0-9]{9}$/.test(mobile)) {
-        return;
-    }
-
-    // Stop Tab from moving to the next field
-    event.preventDefault();
-
-    // If already checking, stay here
-    if (mobileCheckInProgress) {
-        return;
-    }
-
-    // If already registered, stay here
-    if (mobileAlreadyRegistered) {
-        return;
-    }
+    // Reset previous result
+    mobileAlreadyRegistered = false;
+    mobileCheckInProgress = false;
+    
+qualificationInput.disabled = true;
 
     const message =
         document.getElementById("studentMobileMessage");
 
     message.textContent = "";
+});
+
+
+// ==========================================
+// CHECK STUDENT MOBILE NUMBER
+// ==========================================
+
+function checkStudentMobile(callback) {
+
+    const mobile =
+        studentMobileInput.value.trim();
+
+    const message =
+        document.getElementById("studentMobileMessage");
+
+
+    // ------------------------------------------
+    // CHECK 1: MOBILE MUST BE 10 DIGITS
+    // ------------------------------------------
+
+    if (!/^[6-9][0-9]{9}$/.test(mobile)) {
+
+        message.textContent =
+            "Please enter a valid 10-digit mobile number.";
+
+        studentMobileInput.focus();
+
+        callback(false);
+
+        return;
+    }
+
+
+    // ------------------------------------------
+    // ALREADY CHECKING
+    // ------------------------------------------
+
+    if (mobileCheckInProgress) {
+        callback(false);
+        return;
+    }
+
+
+    // ------------------------------------------
+    // ALREADY REGISTERED
+    // ------------------------------------------
+
+    if (mobileAlreadyRegistered) {
+        callback(false);
+        return;
+    }
+
+
+    // ------------------------------------------
+    // SHOW CHECKING MESSAGE
+    // ------------------------------------------
+
+    message.textContent =
+        "Checking mobile number...";
+
+    message.style.color = "red";
+
 
     mobileCheckInProgress = true;
+
+
+    // ------------------------------------------
+    // CREATE JSONP CALLBACK
+    // ------------------------------------------
 
     const callbackName =
         "mobileCheckCallback_" + Date.now();
 
     let completed = false;
+
 
     window[callbackName] = function (response) {
 
@@ -169,42 +385,51 @@ studentMobileInput.addEventListener("keydown", function (event) {
 
         delete window[callbackName];
 
-        if (response && response.success) {
 
-            // Already registered
+        // --------------------------------------
+        // MOBILE ALREADY REGISTERED
+        // --------------------------------------
+
+        if (
+            response &&
+            response.success
+        ) {
+
             mobileAlreadyRegistered = true;
 
-            message.textContent =
-                "You are already registered with this mobile number. " +
-                "For details, go to Already Registered menu.";
+
+            message.innerHTML =
+                'You are already registered with this mobile number. ' +
+                'Please visit <strong>Already Registered</strong> menu for details.';
+
+
+            message.style.color = "red";
+
 
             studentMobileInput.focus();
+
+
+            callback(false);
 
             return;
         }
 
-        // Not registered
+
+        // --------------------------------------
+        // MOBILE NOT REGISTERED
+        // --------------------------------------
+
         mobileAlreadyRegistered = false;
 
         message.textContent = "";
 
-        // Find the next form field
-        const fields = Array.from(
-            form.querySelectorAll(
-                "input:not([type='hidden']), select, textarea"
-            )
-        );
-
-        const currentIndex =
-            fields.indexOf(studentMobileInput);
-
-        if (
-            currentIndex !== -1 &&
-            fields[currentIndex + 1]
-        ) {
-            fields[currentIndex + 1].focus();
-        }
+        callback(true);
     };
+
+
+    // ------------------------------------------
+    // CREATE APPS SCRIPT URL
+    // ------------------------------------------
 
     const url =
         scriptURL +
@@ -214,11 +439,21 @@ studentMobileInput.addEventListener("keydown", function (event) {
         "&callback=" +
         encodeURIComponent(callbackName);
 
+
+    // ------------------------------------------
+    // CREATE SCRIPT REQUEST
+    // ------------------------------------------
+
     const script =
         document.createElement("script");
 
     script.src = url;
     script.async = true;
+
+
+    // ------------------------------------------
+    // ERROR
+    // ------------------------------------------
 
     script.onerror = function () {
 
@@ -226,22 +461,113 @@ studentMobileInput.addEventListener("keydown", function (event) {
             return;
         }
 
+
         mobileCheckInProgress = false;
 
         delete window[callbackName];
 
         script.remove();
 
+
         message.textContent =
             "Unable to check this mobile number. Please try again.";
 
+        message.style.color = "red";
+
+
         studentMobileInput.focus();
+
+        callback(false);
     };
 
+
+    // ------------------------------------------
+    // TIMEOUT
+    // ------------------------------------------
+
+    const timeout =
+        setTimeout(function () {
+
+            if (!completed) {
+
+                mobileCheckInProgress = false;
+
+                delete window[callbackName];
+
+                script.remove();
+
+
+                message.textContent =
+                    "The server is taking too long to respond. Please try again.";
+
+                message.style.color = "red";
+
+
+                studentMobileInput.focus();
+
+                callback(false);
+            }
+
+        }, 20000);
+
+
+    // ------------------------------------------
+    // SUCCESSFUL REQUEST
+    // ------------------------------------------
+
+    script.onload = function () {
+
+        clearTimeout(timeout);
+
+        setTimeout(function () {
+
+            script.remove();
+
+        }, 100);
+
+    };
+
+
     document.body.appendChild(script);
+}
+
+// ==========================================
+// CHECK MOBILE BEFORE MOVING TO NEXT FIELD
+// ==========================================
+
+studentMobileInput.addEventListener(
+    "blur",
+    function () {
+
+        const mobile =
+            studentMobileInput.value.trim();
+
+        // Don't check empty mobile number
+        if (mobile === "") {
+            return;
+        }
+
+        // Don't check incomplete/invalid number
+        if (!/^[6-9][0-9]{9}$/.test(mobile)) {
+            return;
+        }
+
+        // Check Google Sheet
+       checkStudentMobile(function (isValid) {
+
+    if (!isValid) {
+        studentMobileInput.focus();
+        return;
+    }
+
+    // Mobile is valid and NOT registered.
+    qualificationInput.disabled = false;
+    qualificationInput.focus();
+
 });
 
-
+    }
+);
 // ==========================================
 // REGISTRATION FORM
 // ==========================================
