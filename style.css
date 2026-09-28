@@ -1,0 +1,531 @@
+/* =====================================
+   RESET
+===================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+
+/* =====================================
+   BODY
+===================================== */
+
+body {
+    background: #f4f7f6;
+
+    color: #2d2d2d;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 15px;
+}
+
+
+/* =====================================
+   MAIN WORKSHOP HEADING
+===================================== */
+
+.workshop-heading {
+
+    width: 100%;
+
+    padding: 24px 15px;
+
+    background: #075f52;
+
+    color: white;
+
+    text-align: center;
+
+    font-size: 28px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.5px;
+
+    line-height: 1.3;
+
+}
+
+
+/* =====================================
+   REGISTRATION FORM CONTAINER
+===================================== */
+
+.container {
+
+    width: 92%;
+
+    max-width: 680px;
+
+    margin: 32px auto;
+
+    padding: 30px 38px 35px;
+
+    background: white;
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 3px 15px rgba(0, 0, 0, 0.08);
+
+}
+
+
+/* =====================================
+   REGISTRATION FORM HEADING
+===================================== */
+
+.container > h1 {
+
+    margin: 0 0 30px;
+
+    padding: 0;
+
+    background: none;
+
+    color: #075f52;
+
+    text-align: center;
+
+    font-size: 23px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.3px;
+
+}
+
+
+/* =====================================
+   LABELS
+===================================== */
+
+#registrationForm > label,
+#collegeSection > label,
+.form-group > label {
+
+    display: block;
+
+    margin-top: 17px;
+
+    margin-bottom: 7px;
+
+    color: #333;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    line-height: 1.4;
+
+}
+
+
+/* =====================================
+   INPUTS + DROPDOWNS
+===================================== */
+
+#registrationForm input[type="text"],
+#registrationForm input[type="tel"],
+#registrationForm select {
+
+    display: block;
+
+    width: 280px;
+
+    height: 38px;
+
+    padding: 7px 10px;
+
+    background: #ffffff;
+
+    border: 1px solid #c9d3d0;
+
+    border-radius: 6px;
+
+    color: #333;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 14px;
+
+    outline: none;
+
+    box-sizing: border-box;
+
+}
+
+
+/* =====================================
+   INPUT FOCUS
+===================================== */
+
+#registrationForm input[type="text"]:focus,
+#registrationForm input[type="tel"]:focus,
+#registrationForm select:focus {
+
+    border-color: #1683bd;
+
+    box-shadow:
+        0 0 0 2px rgba(22, 131, 189, 0.10);
+
+}
+
+
+/* =====================================
+   PLACEHOLDER
+===================================== */
+
+#registrationForm input::placeholder {
+
+    color: #999;
+
+    font-size: 13px;
+
+}
+
+
+/* =====================================
+   ADDRESS HEADING
+===================================== */
+
+.section-heading {
+
+    margin-top: 30px;
+
+    margin-bottom: 2px;
+
+    padding-bottom: 8px;
+
+    color: #0878b8;
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.5px;
+
+    border-bottom: 2px solid #0878b8;
+
+}
+
+
+/* =====================================
+   RADIO BUTTON SECTION
+===================================== */
+
+.form-group {
+
+    margin-top: 18px;
+
+}
+
+
+.radio-group {
+
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 18px;
+
+    margin-top: 9px;
+
+}
+
+
+.radio-group label {
+
+    display: flex;
+
+    align-items: center;
+
+    margin: 0;
+
+    color: #444;
+
+    font-size: 14px;
+
+    font-weight: 400;
+
+    cursor: pointer;
+
+}
+
+
+.radio-group input[type="radio"] {
+
+    width: auto;
+
+    height: auto;
+
+    margin: 0 6px 0 0;
+
+}
+
+
+/* =====================================
+   SUBMIT BUTTON
+===================================== */
+
+#registrationForm button[type="submit"] {
+
+    display: block;
+
+    width: 170px;
+
+    height: 42px;
+
+    margin: 30px auto 0;
+
+    background: #075f52;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 6px;
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+}
+
+
+#registrationForm button[type="submit"]:hover {
+
+    background: #064d43;
+
+}
+
+
+/* =====================================
+   SUCCESS POPUP
+===================================== */
+
+.popup {
+
+    display: none;
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0, 0, 0, 0.45);
+
+    justify-content: center;
+
+    align-items: center;
+
+    z-index: 9999;
+
+}
+
+
+.popup-content {
+
+    width: 90%;
+
+    max-width: 400px;
+
+    padding: 28px 25px;
+
+    background: white;
+
+    border-radius: 10px;
+
+    text-align: center;
+
+    box-shadow:
+        0 5px 20px rgba(0, 0, 0, 0.2);
+
+}
+
+
+.popup-content h2 {
+
+    margin: 0 0 12px;
+
+    color: #075f52;
+
+    font-size: 22px;
+
+}
+
+
+#successMessage {
+
+    margin: 10px 0 20px;
+
+    color: #333;
+
+    font-size: 16px;
+
+    line-height: 1.6;
+
+}
+
+
+.popup-content button {
+
+    width: 100px;
+
+    height: 38px;
+
+    background: #075f52;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 6px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+}
+
+
+/* =====================================
+   MOBILE
+===================================== */
+
+@media (max-width: 600px) {
+
+    .workshop-heading {
+
+        padding: 18px 12px;
+
+        font-size: 21px;
+
+        line-height: 1.35;
+
+    }
+
+
+    .container {
+
+        width: 94%;
+
+        margin: 20px auto;
+
+        padding: 23px 18px 28px;
+
+    }
+
+
+    .container > h1 {
+
+        margin-bottom: 24px;
+
+        font-size: 21px;
+
+    }
+
+
+    #registrationForm > label,
+    #collegeSection > label,
+    .form-group > label {
+
+        margin-top: 15px;
+
+        margin-bottom: 6px;
+
+        font-size: 14px;
+
+    }
+
+
+    /* Same size on mobile */
+
+    #registrationForm input[type="text"],
+    #registrationForm input[type="tel"],
+    #registrationForm select {
+
+        width: 100%;
+
+        height: 40px;
+
+        padding: 8px 10px;
+
+        font-size: 14px;
+
+    }
+
+
+    .section-heading {
+
+        margin-top: 25px;
+
+        padding-bottom: 7px;
+
+        font-size: 16px;
+
+    }
+
+
+    .radio-group {
+
+        gap: 12px;
+
+    }
+
+
+    .radio-group label {
+
+        font-size: 14px;
+
+    }
+
+
+    #registrationForm button[type="submit"] {
+
+        width: 160px;
+
+        height: 42px;
+
+        margin-top: 27px;
+
+    }
+
+
+    .popup-content {
+
+        width: 88%;
+
+        padding: 25px 18px;
+
+    }
+
+}

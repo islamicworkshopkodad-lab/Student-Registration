@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>One-Day Islamic Workshop</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- MAIN WORKSHOP HEADING -->
+    <div class="workshop-heading">
+        ONE-DAY ISLAMIC TRAINING WORKSHOP
+    </div>
+
+
+    <!-- REGISTRATION FORM -->
+    <div class="container">
+
+        <h1>Registration Form</h1>
+
+        <form id="registrationForm">
+
+            <!-- Student Name -->
+            <label for="studentName">Student Name</label>
+
+            <input
+                type="text"
+                id="studentName"
+                placeholder="Enter student name"
+                required
+            >
+
+
+            <!-- Student Mobile -->
+            <label for="studentMobile">Student Mobile Number</label>
+
+            <input
+                type="tel"
+                id="studentMobile"
+                placeholder="Enter 10-digit mobile number"
+                maxlength="10"
+                inputmode="numeric"
+                required
+            >
+
+
+            <!-- Qualification -->
+            <label for="qualification">Qualification</label>
+
+            <select id="qualification" required>
+                <option value="">Select Qualification</option>
+                <option value="School">School</option>
+                <option value="College">College</option>
+            </select>
+
+
+            <!-- College Qualification -->
+            <div id="collegeSection" style="display: none;">
+
+                <label for="college">College</label>
+
+                <select id="college">
+                    <option value="">Select College Qualification</option>
+                    <option value="Inter">Inter</option>
+                    <option value="Diploma">Diploma</option>
+                    <option value="Degree">Degree</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Pharmacy">Pharmacy</option>
+                    <option value="PG/Above">PG / Above</option>
+                </select>
+
+            </div>
+
+
+            <!-- Mother Name -->
+            <label for="motherName">Mother Name</label>
+
+            <input
+                type="text"
+                id="motherName"
+                placeholder="Enter mother name"
+                required
+            >
+
+
+            <!-- Father Name -->
+            <label for="fatherName">Father Name</label>
+
+            <input
+                type="text"
+                id="fatherName"
+                placeholder="Enter father name"
+                required
+            >
+
+
+            <!-- Parent Mobile -->
+            <label for="parentMobile">Parent Mobile Number</label>
+
+            <input
+                type="tel"
+                id="parentMobile"
+                placeholder="Enter 10-digit mobile number"
+                maxlength="10"
+                inputmode="numeric"
+                required
+            >
+
+
+            <!-- ADDRESS SECTION -->
+            <div class="section-heading">
+                ADDRESS
+            </div>
+
+
+            <!-- Village -->
+            <label for="village">Village</label>
+
+            <input
+                type="text"
+                id="village"
+                placeholder="Enter village"
+                required
+            >
+
+
+            <!-- Constituency -->
+            <label for="constituency">Constituency</label>
+
+            <select id="constituency" required>
+                <option value="">Select Constituency</option>
+                <option value="Kodad">Kodad</option>
+                <option value="Huzurnagar">Huzurnagar</option>
+                <option value="Jaggayyapeta">Jaggayyapeta</option>
+            </select>
+
+
+            <!-- Quran Question -->
+            <div class="form-group">
+
+                <label>
+                    Can you read the Qur'an in Arabic?
+                </label>
+
+                <div class="radio-group">
+
+                    <label>
+                        <input
+                            type="radio"
+                            name="quranArabic"
+                            value="Yes"
+                            required
+                        >
+                        <span>Yes</span>
+                    </label>
+
+                    <label>
+                        <input
+                            type="radio"
+                            name="quranArabic"
+                            value="No"
+                        >
+                        <span>No</span>
+                    </label>
+
+                    <label>
+                        <input
+                            type="radio"
+                            name="quranArabic"
+                            value="A little / Learning"
+                        >
+                        <span>A little / Learning</span>
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- Nearby Masjid -->
+            <div class="form-group">
+
+                <label for="masjidName">
+                    Nearby Masjid Name (Where you offer Namaz)?
+                </label>
+
+                <input
+                    type="text"
+                    id="masjidName"
+                    name="masjidName"
+                    placeholder="Enter Masjid Name"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Submit -->
+            <button type="submit" id="submitBtn">
+                Submit
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- SUCCESS POPUP -->
+
+    <div id="successPopup" class="popup">
+
+        <div class="popup-content">
+
+            <h2>Registration Successful</h2>
+
+            <p id="successMessage"></p>
+
+            <button
+                type="button"
+                onclick="closePopup()"
+            >
+                OK
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
