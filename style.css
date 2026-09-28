@@ -529,3 +529,487 @@ body {
     }
 
 }
+
+/* =====================================
+   REGISTRATION SUCCESS POPUP
+===================================== */
+
+.popup-content h2 {
+    margin: 0 0 8px;
+
+    color: #075f52;
+
+    font-size: 22px;
+
+    font-weight: 700;
+
+    text-align: center;
+}
+
+
+.popup-content h3 {
+    margin: 0 0 22px;
+
+    color: #1683bd;
+
+    font-size: 18px;
+
+    font-weight: 600;
+
+    text-align: center;
+}
+
+
+.registration-details {
+    text-align: left;
+
+    margin: 0 auto 22px;
+
+    padding: 5px 8px;
+}
+
+
+.registration-details p {
+    margin: 11px 0;
+
+    color: #333;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+
+.registration-details strong {
+    color: #075f52;
+
+    font-weight: 600;
+}
+
+
+.registration-details span {
+    color: #222;
+
+    font-weight: 500;
+}
+
+
+.popup-content button {
+    display: block;
+
+    margin: 10px auto 0;
+
+    width: 100px;
+
+    height: 38px;
+
+    background: #075f52;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 6px;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .popup-content h2 {
+        font-size: 20px;
+    }
+
+    .popup-content h3 {
+        font-size: 17px;
+        margin-bottom: 18px;
+    }
+
+    .registration-details p {
+        font-size: 14px;
+        margin: 10px 0;
+    }
+
+}
+
+/* =====================================
+   POPUP BUTTONS
+===================================== */
+
+.popup-buttons {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 20px;
+
+    flex-wrap: wrap;
+}
+
+
+.popup-buttons button {
+
+    width: auto;
+
+    min-width: 72px;
+
+    height: 34px;
+
+    padding: 5px 12px;
+
+    background: #075f52;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 5px;
+
+    font-family: "Segoe UI", Arial, sans-serif;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+
+.popup-buttons button:hover {
+
+    background: #064d43;
+
+}
+
+
+#copyBtn {
+
+    background: #1683bd;
+}
+
+
+#copyBtn:hover {
+
+    background: #116b9b;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .popup-buttons {
+
+        gap: 7px;
+
+    }
+
+    .popup-buttons button {
+
+        min-width: 68px;
+
+        height: 34px;
+
+        padding: 5px 10px;
+
+        font-size: 12px;
+
+    }
+
+}
+
+/* ==========================================
+   ALREADY REGISTERED BUTTON
+   ========================================== */
+
+.already-registered-area {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 25px 0 25px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+
+#alreadyRegisteredBtn {
+
+    width: auto;
+
+    margin: 0;
+
+    padding: 7px 14px;
+
+    background-color: #003366;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 5px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+#alreadyRegisteredBtn:hover {
+    background-color: #001f3f;
+}
+
+
+/* ==========================================
+   REGISTRATION DETAILS
+   ========================================== */
+
+.registration-details {
+    text-align: left;
+}
+
+
+.registration-details p {
+    margin: 12px 0;
+    font-size: 15px;
+}
+
+
+.registration-details strong {
+    display: inline-block;
+    min-width: 125px;
+}
+
+
+.registration-details span {
+    font-weight: bold;
+}
+
+
+/* ==========================================
+   POPUP BUTTONS
+   ========================================== */
+
+.popup-buttons {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 20px;
+
+    flex-wrap: wrap;
+}
+
+
+.popup-buttons button {
+
+    width: auto;
+
+    min-width: 72px;
+
+    height: 34px;
+
+    margin: 0;
+
+    padding: 5px 12px;
+
+    background-color: #003366;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 5px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.popup-buttons button:hover {
+    background-color: #001f3f;
+}
+
+
+#copyBtn {
+    background-color: #1683bd;
+}
+
+
+#copyBtn:hover {
+    background-color: #116b9b;
+}
+
+
+#downloadBtn {
+    background-color: #075f52;
+}
+
+
+#downloadBtn:hover {
+    background-color: #064d43;
+}
+
+
+/* ==========================================
+   ALREADY REGISTERED POPUP
+   ========================================== */
+
+.already-text {
+
+    font-size: 15px !important;
+
+    font-weight: normal !important;
+
+    margin: 5px 0 12px 0 !important;
+}
+
+
+#registeredMobile {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 10px;
+
+    border: 1px solid #aaa;
+
+    border-radius: 5px;
+
+    font-size: 16px;
+
+    text-align: center;
+}
+
+
+#getDetailsBtn {
+
+    width: 150px;
+
+    margin: 15px auto 0;
+
+    padding: 9px;
+
+    background-color: #075f52;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 5px;
+
+    font-size: 15px;
+
+    cursor: pointer;
+}
+
+
+#getDetailsBtn:hover {
+    background-color: #064d43;
+}
+
+
+#alreadyRegisteredPopup .popup-content > button:last-child {
+
+    width: 100px;
+
+    margin: 10px auto 0;
+
+    padding: 8px;
+
+    background-color: #003366;
+
+    font-size: 14px;
+}
+
+
+/* ==========================================
+   MOBILE
+   ========================================== */
+
+@media (max-width: 600px) {
+
+    .already-registered-area {
+
+        padding: 8px 15px 0 15px;
+
+    }
+
+
+    #alreadyRegisteredBtn {
+
+        font-size: 12px;
+
+        padding: 7px 11px;
+
+    }
+
+
+    .popup-buttons {
+
+        gap: 6px;
+
+    }
+
+
+    .popup-buttons button {
+
+        min-width: 65px;
+
+        height: 34px;
+
+        padding: 5px 9px;
+
+        font-size: 12px;
+
+    }
+
+
+    .registration-details p {
+
+        font-size: 14px;
+
+    }
+
+
+    .registration-details strong {
+
+        min-width: 115px;
+
+    }
+
+}
+
+/* Student mobile registration message */
+#studentMobileMessage {
+    color: #d66a6a;
+    font-size: 14px;
+    line-height: 1.4;
+    margin-top: 6px;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
