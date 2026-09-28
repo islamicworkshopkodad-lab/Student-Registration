@@ -8,6 +8,9 @@
     <title>One-Day Islamic Workshop</title>
 
     <link rel="stylesheet" href="style.css">
+
+    <!-- PDF LIBRARY -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 
 <body>
@@ -15,6 +18,19 @@
     <!-- MAIN WORKSHOP HEADING -->
     <div class="workshop-heading">
         ONE-DAY ISLAMIC TRAINING WORKSHOP
+    </div>
+
+
+    <!-- ALREADY REGISTERED BUTTON -->
+    <div class="already-registered-area">
+
+        <button
+            type="button"
+            id="alreadyRegisteredBtn"
+            onclick="openAlreadyRegisteredPopup()">
+            Already Registered?
+        </button>
+
     </div>
 
 
@@ -47,6 +63,7 @@
                 inputmode="numeric"
                 required
             >
+            <div id="studentMobileMessage"></div>
 
 
             <!-- Qualification -->
@@ -210,26 +227,121 @@
     </div>
 
 
-    <!-- SUCCESS POPUP -->
+
+    <!-- ==========================================
+         REGISTRATION SUCCESS / DETAILS POPUP
+         ========================================== -->
 
     <div id="successPopup" class="popup">
 
         <div class="popup-content">
 
-            <h2>Registration Successful</h2>
+            <h2>One Day Islamic Training Workshop</h2>
 
-            <p id="successMessage"></p>
+            <h3 id="popupHeading">
+                Registration Successful
+            </h3>
+
+
+            <div class="registration-details">
+
+                <p>
+                    <strong>Participant:</strong>
+                    <span id="popupParticipant"></span>
+                </p>
+
+                <p>
+                    <strong>Registration ID:</strong>
+                    <span id="popupRegistrationId"></span>
+                </p>
+
+                <p>
+                    <strong>Date:</strong>
+                    11 October 2026
+                </p>
+
+                <p>
+                    <strong>Venue:</strong>
+                    AR AR Function Hall, Kodad
+                </p>
+
+                <p>
+                    <strong>Reporting Time:</strong>
+                    8:30 AM
+                </p>
+
+            </div>
+
+
+            <div class="popup-buttons">
+
+                <button
+                    type="button"
+                    id="copyBtn"
+                    onclick="copyRegistrationDetails()">
+                    Copy
+                </button>
+
+                <button
+                    type="button"
+                    id="downloadBtn"
+                    onclick="downloadRegistrationDetails()">
+                    Download PDF
+                </button>
+
+                <button
+                    type="button"
+                    onclick="closePopup()">
+                    OK
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ==========================================
+         ALREADY REGISTERED MOBILE POPUP
+         ========================================== -->
+
+    <div id="alreadyRegisteredPopup" class="popup">
+
+        <div class="popup-content">
+
+            <h2>Already Registered?</h2>
+
+            <p class="already-text">
+                Enter your registered mobile number
+            </p>
+
+            <input
+                type="tel"
+                id="registeredMobile"
+                placeholder="Enter 10-digit mobile number"
+                maxlength="10"
+                inputmode="numeric"
+            >
 
             <button
                 type="button"
-                onclick="closePopup()"
-            >
-                OK
+                id="getDetailsBtn"
+                onclick="getRegisteredDetails()">
+                Get Details
+            </button>
+
+            <button
+                type="button"
+                onclick="closeAlreadyRegisteredPopup()">
+                Cancel
             </button>
 
         </div>
 
     </div>
+
 
 
     <script src="script.js"></script>
