@@ -19,7 +19,7 @@ const parentMobileInput =
 const qualificationInput =
     document.getElementById("qualification");
 
-qualificationInput.disabled = true;
+qualificationInput.disabled = false;
 
 const collegeSection =
     document.getElementById("collegeSection");
@@ -225,349 +225,24 @@ form.addEventListener("focusin", function (event) {
 
         // Normal field
         if (
-    previousField &&
-    !isFieldFilled(previousField)
-) {
-
-    alert(
-        "Please complete the previous field before continuing."
-    );
-
-    previousField.focus();
-
-    return;
-}
-
-
-// ==========================================
-// SPECIAL CHECK FOR STUDENT MOBILE
-// ==========================================
-
-if (previousField === studentMobileInput) {
-
-    // Mobile is currently being checked
-    if (mobileCheckInProgress) {
-
-        studentMobileInput.focus();
-
-        return;
-    }
-
-
-    // Mobile is already registered
-    if (mobileAlreadyRegistered) {
-
-        studentMobileInput.focus();
-
-        return;
-    }
-
-
-    // Mobile has not been checked yet
-    if (!/^[6-9][0-9]{9}$/.test(
-        studentMobileInput.value.trim()
-    )) {
-
-        studentMobileInput.focus();
-
-        return;
-    }
-}
-    }
-
-});
-
-// ==========================================
-// STUDENT MOBILE NUMBER CHECK
-// ==========================================
-
-let mobileCheckInProgress = false;
-let mobileAlreadyRegistered = false;
-
-
-// ==========================================
-// CLEAR MOBILE CHECK WHEN NUMBER CHANGES
-// ==========================================
-
-studentMobileInput.addEventListener("input", function () {
-
-    // Reset previous result
-    mobileAlreadyRegistered = false;
-    mobileCheckInProgress = false;
-    
-qualificationInput.disabled = true;
-
-    const message =
-        document.getElementById("studentMobileMessage");
-
-    message.textContent = "";
-});
-
-
-// ==========================================
-// CHECK STUDENT MOBILE NUMBER
-// ==========================================
-
-function checkStudentMobile(callback) {
-
-    const mobile =
-        studentMobileInput.value.trim();
-
-    const message =
-        document.getElementById("studentMobileMessage");
-
-
-    // ------------------------------------------
-    // CHECK 1: MOBILE MUST BE 10 DIGITS
-    // ------------------------------------------
-
-    if (!/^[6-9][0-9]{9}$/.test(mobile)) {
-
-        message.textContent =
-            "Please enter a valid 10-digit mobile number.";
-
-        studentMobileInput.focus();
-
-        callback(false);
-
-        return;
-    }
-
-
-    // ------------------------------------------
-    // ALREADY CHECKING
-    // ------------------------------------------
-
-    if (mobileCheckInProgress) {
-        callback(false);
-        return;
-    }
-
-
-    // ------------------------------------------
-    // ALREADY REGISTERED
-    // ------------------------------------------
-
-    if (mobileAlreadyRegistered) {
-        callback(false);
-        return;
-    }
-
-
-    // ------------------------------------------
-    // SHOW CHECKING MESSAGE
-    // ------------------------------------------
-
-    message.textContent =
-        "Checking mobile number...";
-
-    message.style.color = "red";
-
-
-    mobileCheckInProgress = true;
-
-
-    // ------------------------------------------
-    // CREATE JSONP CALLBACK
-    // ------------------------------------------
-
-    const callbackName =
-        "mobileCheckCallback_" + Date.now();
-
-    let completed = false;
-
-
-    window[callbackName] = function (response) {
-
-        completed = true;
-
-        mobileCheckInProgress = false;
-
-        delete window[callbackName];
-
-
-        // --------------------------------------
-        // MOBILE ALREADY REGISTERED
-        // --------------------------------------
-
-        if (
-            response &&
-            response.success
+            previousField &&
+            !isFieldFilled(previousField)
         ) {
 
-            mobileAlreadyRegistered = true;
+            alert(
+                "Please complete the previous field before continuing."
+            );
 
-
-            message.innerHTML =
-                'You are already registered with this mobile number. ' +
-                'Please visit <strong>Already Registered</strong> menu for details.';
-
-
-            message.style.color = "red";
-
-
-            studentMobileInput.focus();
-
-
-            callback(false);
+            previousField.focus();
 
             return;
         }
 
-
-        // --------------------------------------
-        // MOBILE NOT REGISTERED
-        // --------------------------------------
-
-        mobileAlreadyRegistered = false;
-
-        message.textContent = "";
-
-        callback(true);
-    };
-
-
-    // ------------------------------------------
-    // CREATE APPS SCRIPT URL
-    // ------------------------------------------
-
-    const url =
-        scriptURL +
-        "?action=getDetails" +
-        "&studentMobile=" +
-        encodeURIComponent(mobile) +
-        "&callback=" +
-        encodeURIComponent(callbackName);
-
-
-    // ------------------------------------------
-    // CREATE SCRIPT REQUEST
-    // ------------------------------------------
-
-    const script =
-        document.createElement("script");
-
-    script.src = url;
-    script.async = true;
-
-
-    // ------------------------------------------
-    // ERROR
-    // ------------------------------------------
-
-    script.onerror = function () {
-
-        if (completed) {
-            return;
-        }
-
-
-        mobileCheckInProgress = false;
-
-        delete window[callbackName];
-
-        script.remove();
-
-
-        message.textContent =
-            "Unable to check this mobile number. Please try again.";
-
-        message.style.color = "red";
-
-
-        studentMobileInput.focus();
-
-        callback(false);
-    };
-
-
-    // ------------------------------------------
-    // TIMEOUT
-    // ------------------------------------------
-
-    const timeout =
-        setTimeout(function () {
-
-            if (!completed) {
-
-                mobileCheckInProgress = false;
-
-                delete window[callbackName];
-
-                script.remove();
-
-
-                message.textContent =
-                    "The server is taking too long to respond. Please try again.";
-
-                message.style.color = "red";
-
-
-                studentMobileInput.focus();
-
-                callback(false);
-            }
-
-        }, 20000);
-
-
-    // ------------------------------------------
-    // SUCCESSFUL REQUEST
-    // ------------------------------------------
-
-    script.onload = function () {
-
-        clearTimeout(timeout);
-
-        setTimeout(function () {
-
-            script.remove();
-
-        }, 100);
-
-    };
-
-
-    document.body.appendChild(script);
-}
-
-// ==========================================
-// CHECK MOBILE BEFORE MOVING TO NEXT FIELD
-// ==========================================
-
-studentMobileInput.addEventListener(
-    "blur",
-    function () {
-
-        const mobile =
-            studentMobileInput.value.trim();
-
-        // Don't check empty mobile number
-        if (mobile === "") {
-            return;
-        }
-
-        // Don't check incomplete/invalid number
-        if (!/^[6-9][0-9]{9}$/.test(mobile)) {
-            return;
-        }
-
-        // Check Google Sheet
-       checkStudentMobile(function (isValid) {
-
-    if (!isValid) {
-        studentMobileInput.focus();
-        return;
     }
-
-    // Mobile is valid and NOT registered.
-    qualificationInput.disabled = false;
-    qualificationInput.focus();
 
 });
 
-    }
-);
+
 // ==========================================
 // REGISTRATION FORM
 // ==========================================
@@ -1409,3 +1084,31 @@ function closePopup() {
         "none";
 
 }
+
+What I changed
+
+Only these parts were changed:
+
+- Removed the Student Mobile → Google Sheets verification.
+- Removed "mobileCheckInProgress".
+- Removed "mobileAlreadyRegistered".
+- Removed "checkStudentMobile()".
+- Removed the "blur" event that was checking the number.
+- Removed the special mobile restriction from the field-by-field "focusin".
+- Changed:
+
+qualificationInput.disabled = true;
+
+to:
+
+qualificationInput.disabled = false;
+
+Everything else—including the final duplicate-registration alert from Apps Script, Already Registered menu, popup, PDF, copy function, parent mobile validation, and field-by-field restriction—is retained.
+
+Important: After replacing the JS, test these 3 cases:
+
+1. Enter a valid new number → you should be able to go directly to Qualification.
+2. Enter fewer than 10 digits → final submission should show the invalid-number alert.
+3. Enter an already-registered number and complete the form → on Submit, the existing Apps Script duplicate check should show the Registration ID alert.
+
+If case 3 doesn't show the duplicate alert, don't change anything else yet—send me the Apps Script code, because that check is controlled partly by your Apps Script.
