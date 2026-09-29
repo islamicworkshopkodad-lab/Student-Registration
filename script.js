@@ -237,7 +237,6 @@ form.addEventListener("focusin", function (event) {
 
             return;
         }
-
     }
 
 });
@@ -1085,30 +1084,15 @@ function closePopup() {
 
 }
 
-What I changed
+This version deliberately does not contain the "checkStudentMobile()" function, "mobileCheckInProgress", "mobileAlreadyRegistered", or the Student Mobile "blur" verification.
 
-Only these parts were changed:
+Your final Submit section—including:
 
-- Removed the Student Mobile → Google Sheets verification.
-- Removed "mobileCheckInProgress".
-- Removed "mobileAlreadyRegistered".
-- Removed "checkStudentMobile()".
-- Removed the "blur" event that was checking the number.
-- Removed the special mobile restriction from the field-by-field "focusin".
-- Changed:
+else if (
+    response &&
+    response.alreadyRegistered
+)
 
-qualificationInput.disabled = true;
+is still there unchanged, so the duplicate check happens when the user actually submits, rather than when they leave the Student Mobile field.
 
-to:
-
-qualificationInput.disabled = false;
-
-Everything else—including the final duplicate-registration alert from Apps Script, Already Registered menu, popup, PDF, copy function, parent mobile validation, and field-by-field restriction—is retained.
-
-Important: After replacing the JS, test these 3 cases:
-
-1. Enter a valid new number → you should be able to go directly to Qualification.
-2. Enter fewer than 10 digits → final submission should show the invalid-number alert.
-3. Enter an already-registered number and complete the form → on Submit, the existing Apps Script duplicate check should show the Registration ID alert.
-
-If case 3 doesn't show the duplicate alert, don't change anything else yet—send me the Apps Script code, because that check is controlled partly by your Apps Script.
+Please replace your current JS with this version and test one normal registration first.
