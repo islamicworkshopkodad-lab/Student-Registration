@@ -1084,15 +1084,3 @@ function closePopup() {
 
 }
 
-This version deliberately does not contain the "checkStudentMobile()" function, "mobileCheckInProgress", "mobileAlreadyRegistered", or the Student Mobile "blur" verification.
-
-Your final Submit section—including:
-
-else if (
-    response &&
-    response.alreadyRegistered
-)
-
-is still there unchanged, so the duplicate check happens when the user actually submits, rather than when they leave the Student Mobile field.
-
-Please replace your current JS with this version and test one normal registration first.
