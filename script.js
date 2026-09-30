@@ -30,8 +30,7 @@ const collegeInput =
 
 // ==========================================
 // GOOGLE APPS SCRIPT URL
-// ==========================================
-
+// ========================================
 const scriptURL =
     "https://script.google.com/macros/s/AKfycbw-KIBxK0FXT5Qk_awDXQaKMHdKKuRd62TiYJVmjxAeGWeiVSCfRHjNofT8lfAlJMgK/exec";
 
